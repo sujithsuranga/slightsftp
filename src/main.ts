@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { DatabaseManager } from './database';
 import { ServerManager } from './server-manager';
+import { WebServer } from './web-server';
 import * as crypto from 'crypto';
 import logger from './logger';
 
@@ -11,6 +12,7 @@ let loginWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let db: DatabaseManager;
 let serverManager: ServerManager;
+let webServer: WebServer | null = null;
 let isQuitting = false;
 let isLoggingOut = false;
 let authenticatedUser: any = null;
@@ -698,7 +700,23 @@ function setupIpcHandlers(): void {
   });
   
   ipcMain.handle('get-all-listener-statuses', async () => {
-    return serverManager.getAllListenerStatuses();
+    const statuses = serverManager.getAllListenerStatuses();
+    
+    // Always add Web GUI Server to the list
+    statuses.push({
+      listener: {
+        id: -1,
+        name: 'Web GUI Server',
+        protocol: 'HTTP' as any,
+        port: webServer ? (webServer as any).port : parseInt(process.env.WEB_PORT || '3000'),
+        bindingIp: '0.0.0.0',
+        enabled: true,
+        maxConnections: 100
+      },
+      running: webServer !== null
+    });
+    
+    return statuses;
   });
   
   // Active sessions
@@ -877,6 +895,108 @@ function setupIpcHandlers(): void {
     
     return { success: false };
   });
+
+  // Web Server control
+  ipcMain.handle('start-web-server', async (event, port?: number) => {
+    try {
+      if (webServer) {
+        return { success: false, error: 'Web server is already running' };
+      }
+      
+      const webPort = port || parseInt(process.env.WEB_PORT || '3000');
+      webServer = new WebServer(db, serverManager, webPort);
+      await webServer.start();
+      
+      db.logActivity({
+        listenerId: 0,
+        username: authenticatedUser?.username || 'system',
+        action: 'WEB_SERVER_STARTED',
+        path: `Web GUI server started on port ${webPort}`,
+        success: true
+      });
+      
+      return { success: true, port: webPort };
+    } catch (err: any) {
+      db.logActivity({
+        listenerId: 0,
+        username: authenticatedUser?.username || 'system',
+        action: 'WEB_SERVER_START_FAILED',
+        path: err.message,
+        success: false
+      });
+      return { success: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('stop-web-server', async () => {
+    try {
+      if (!webServer) {
+        return { success: false, error: 'Web server is not running' };
+      }
+      
+      await webServer.stop();
+      webServer = null;
+      
+      db.logActivity({
+        listenerId: 0,
+        username: authenticatedUser?.username || 'system',
+        action: 'WEB_SERVER_STOPPED',
+        path: 'Web GUI server stopped',
+        success: true
+      });
+      
+      return { success: true };
+    } catch (err: any) {
+      db.logActivity({
+        listenerId: 0,
+        username: authenticatedUser?.username || 'system',
+        action: 'WEB_SERVER_STOP_FAILED',
+        path: err.message,
+        success: false
+      });
+      return { success: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('get-web-server-status', async () => {
+    return { 
+      running: webServer !== null,
+      port: webServer ? (webServer as any).port : null
+    };
+  });
+
+  ipcMain.handle('update-web-server-port', async (event, newPort: number) => {
+    try {
+      // Stop existing web server if running
+      if (webServer) {
+        await webServer.stop();
+        webServer = null;
+      }
+      
+      // Start web server on new port
+      webServer = new WebServer(db, serverManager, newPort);
+      await webServer.start();
+      
+      db.logActivity({
+        listenerId: 0,
+        username: authenticatedUser?.username || 'system',
+        action: 'WEB_SERVER_PORT_CHANGED',
+        path: `Web server port changed to ${newPort}`,
+        success: true
+      });
+      
+      return { success: true, port: newPort };
+    } catch (err: any) {
+      db.logActivity({
+        listenerId: 0,
+        username: authenticatedUser?.username || 'system',
+        action: 'WEB_SERVER_PORT_CHANGE_FAILED',
+        path: err.message,
+        success: false
+      });
+      return { success: false, error: err.message };
+    }
+  });
 }
 
 app.whenReady().then(async () => {
@@ -919,6 +1039,15 @@ app.on('window-all-closed', () => {
 app.on('before-quit', async () => {
   logger.info('Application quitting - shutting down servers...');
   isQuitting = true;
+  
+  try {
+    if (webServer) {
+      await webServer.stop();
+      logger.info('Web server stopped');
+    }
+  } catch (err) {
+    logger.error('Error stopping web server:', err);
+  }
   
   try {
     await serverManager.stopAllListeners();

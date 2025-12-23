@@ -57,6 +57,44 @@ window.addEventListener('DOMContentLoaded', () => {
   loadAuthenticatedUser();
   initializeActivityChart();
   loadDashboard();
+  
+  // Set up WebSocket event listeners for real-time updates
+  if (typeof ipcRenderer !== 'undefined' && ipcRenderer.on) {
+    // Listen for activity updates
+    ipcRenderer.on('activity', (event, activity) => {
+      console.log('Received activity update:', activity);
+      
+      // Refresh dashboard to show new activity
+      const currentPanel = document.querySelector('.panel.active');
+      if (currentPanel && currentPanel.id === 'dashboard') {
+        loadDashboard();
+      }
+      
+      // Refresh activity log if on that tab
+      if (currentPanel && currentPanel.id === 'activity') {
+        loadActivityLog();
+      }
+    });
+    
+    // Listen for listener status changes
+    ipcRenderer.on('listener-started', (event, listenerId) => {
+      console.log('Listener started:', listenerId);
+      const currentPanel = document.querySelector('.panel.active');
+      if (currentPanel && (currentPanel.id === 'dashboard' || currentPanel.id === 'listeners')) {
+        loadDashboard();
+        loadListeners();
+      }
+    });
+    
+    ipcRenderer.on('listener-stopped', (event, listenerId) => {
+      console.log('Listener stopped:', listenerId);
+      const currentPanel = document.querySelector('.panel.active');
+      if (currentPanel && (currentPanel.id === 'dashboard' || currentPanel.id === 'listeners')) {
+        loadDashboard();
+        loadListeners();
+      }
+    });
+  }
 });
 
 // Navigation
@@ -165,34 +203,152 @@ async function loadDashboard() {
   displayActivities('dashboard-activity', recentActivities);
 }
 
+async function editWebGUIListener(id) {
+  try {
+    // Check if we're in Electron mode
+    if (typeof ipcRenderer === 'undefined') {
+      alert('Changing the web server port from the web interface is not supported.\n\nPlease restart the server with the WEB_PORT environment variable set to your desired port.');
+      return;
+    }
+    
+    const status = await ipcRenderer.invoke('get-web-server-status');
+    const currentPort = status.port || 3000;
+    
+    // Get the port input element
+    const portInput = document.getElementById('webServerPort');
+    
+    // Reset the input to ensure it's editable
+    portInput.removeAttribute('readonly');
+    portInput.removeAttribute('disabled');
+    portInput.value = '';
+    
+    // Show the modal first
+    document.getElementById('editWebPortModal').classList.add('active');
+    
+    // Set the current port in the form
+    portInput.value = currentPort;
+    
+    // Focus and select the text after a short delay to ensure modal is visible
+    setTimeout(() => {
+      portInput.removeAttribute('readonly');
+      portInput.removeAttribute('disabled');
+      portInput.focus();
+      portInput.select();
+    }, 100);
+  } catch (err) {
+    alert(`Error opening port editor: ${err.message}`);
+  }
+}
+
 // Listeners
 async function loadListeners() {
   const statuses = await ipcRenderer.invoke('get-all-listener-statuses');
   
-  const listenersHtml = statuses.map(s => `
-    <div class="listener-card">
-      <h3>${s.listener.name}</h3>
-      <div class="listener-info">
-        <div><strong>Protocol:</strong> ${s.listener.protocol}</div>
-        <div><strong>Address:</strong> ${s.listener.bindingIp}:${s.listener.port}</div>
-        <div><strong>Enabled:</strong> ${s.listener.enabled ? 'Yes' : 'No'}</div>
-        <div>
-          <span class="status-indicator ${s.running ? 'status-running' : 'status-stopped'}"></span>
-          ${s.running ? 'Running' : 'Stopped'}
+  // Check if we're in web mode
+  const isWebMode = typeof require === 'undefined' || (() => {
+    try {
+      require('electron');
+      return false;
+    } catch (e) {
+      return true;
+    }
+  })();
+  
+  const listenersHtml = statuses.map(s => {
+    const isWebGUI = s.listener.id === -1;
+    
+    // Determine what buttons to show for Web GUI Server
+    let webGuiButtons = '';
+    if (isWebGUI) {
+      if (isWebMode) {
+        // In web mode: No stop button, just edit port
+        webGuiButtons = `<button class="btn btn-warning" onclick="editWebGUIListener(${s.listener.id})">Edit Port</button>`;
+      } else {
+        // In Electron mode: Show start/stop buttons
+        webGuiButtons = s.running 
+          ? `<button class="btn btn-danger" onclick="stopWebGUIServer()">Stop</button>
+             <button class="btn btn-warning" onclick="editWebGUIListener(${s.listener.id})">Edit Port</button>`
+          : `<button class="btn btn-success" onclick="startWebGUIServer()">Start</button>
+             <button class="btn btn-warning" onclick="editWebGUIListener(${s.listener.id})">Edit Port</button>`;
+      }
+    }
+    
+    const securityNote = isWebGUI ? `
+      <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 10px; font-size: 12px;">
+        <strong>⚠️ Security Note:</strong> The web server uses HTTP (not HTTPS). Passwords are hashed but transmitted over an unencrypted connection. For production use, consider setting up a reverse proxy with HTTPS/TLS.
+      </div>
+      <div style="background: #f8f9fa; padding: 10px; margin-top: 10px; font-size: 12px; border-radius: 4px;">
+        <p style="margin: 0 0 6px 0;"><strong>About Web GUI:</strong></p>
+        <ul style="margin: 0; padding-left: 18px;">
+          <li>Allows remote management through a web browser</li>
+          <li>Only users with GUI access enabled can login</li>
+          <li>All actions are logged to the activity log</li>
+          <li>Sessions expire after 24 hours of inactivity</li>
+        </ul>
+      </div>
+    ` : '';
+    
+    return `
+      <div class="listener-card">
+        <h3>${s.listener.name}</h3>
+        <div class="listener-info">
+          <div><strong>Protocol:</strong> ${s.listener.protocol}</div>
+          <div><strong>Address:</strong> ${s.listener.bindingIp}:${s.listener.port}</div>
+          ${!isWebGUI ? `<div><strong>Enabled:</strong> ${s.listener.enabled ? 'Yes' : 'No'}</div>` : ''}
+          <div>
+            <span class="status-indicator ${s.running ? 'status-running' : 'status-stopped'}"></span>
+            ${s.running ? 'Running' : 'Stopped'}
+          </div>
+          ${isWebGUI && s.running ? `<div><strong>URL:</strong> <a href="http://localhost:${s.listener.port}" target="_blank" style="color: #3498db; text-decoration: none;">http://localhost:${s.listener.port}</a></div>` : ''}
+        </div>
+        ${securityNote}
+        <div class="listener-actions">
+          ${isWebGUI ? webGuiButtons : `
+            ${s.running 
+              ? `<button class="btn btn-danger" onclick="stopListener(${s.listener.id})">Stop</button>`
+              : `<button class="btn btn-success" onclick="startListener(${s.listener.id})">Start</button>`
+            }
+            <button class="btn btn-warning" onclick="editListener(${s.listener.id})">Edit Port</button>
+            <button class="btn btn-danger" onclick="deleteListener(${s.listener.id})">Delete</button>
+          `}
         </div>
       </div>
-      <div class="listener-actions">
-        ${s.running 
-          ? `<button class="btn btn-danger" onclick="stopListener(${s.listener.id})">Stop</button>`
-          : `<button class="btn btn-success" onclick="startListener(${s.listener.id})">Start</button>`
-        }
-        <button class="btn btn-warning" onclick="editListener(${s.listener.id})">Edit</button>
-        <button class="btn btn-danger" onclick="deleteListener(${s.listener.id})">Delete</button>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
   
   document.getElementById('listeners-list').innerHTML = listenersHtml || '<div class="empty-state">No listeners configured</div>';
+}
+
+async function startWebGUIServer() {
+  try {
+    const result = await ipcRenderer.invoke('start-web-server');
+    if (result.success) {
+      alert(`Web server started successfully on port ${result.port}!\n\nYou can now access the web GUI at http://localhost:${result.port}`);
+      loadListeners();
+    } else {
+      alert(`Failed to start web server: ${result.error}`);
+    }
+  } catch (err) {
+    alert(`Error starting web server: ${err.message}`);
+  }
+}
+
+async function stopWebGUIServer() {
+  if (!confirm('Are you sure you want to stop the web server? All active web sessions will be disconnected.')) {
+    return;
+  }
+  
+  try {
+    const result = await ipcRenderer.invoke('stop-web-server');
+    if (result.success) {
+      alert('Web server stopped successfully.');
+      loadListeners();
+    } else {
+      alert(`Failed to stop web server: ${result.error}`);
+    }
+  } catch (err) {
+    alert(`Error stopping web server: ${err.message}`);
+  }
 }
 
 async function startListener(id) {
@@ -1072,6 +1228,45 @@ document.getElementById('logSettingsForm').addEventListener('submit', async (e) 
   }
 });
 
+document.getElementById('editWebPortForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const newPort = parseInt(document.getElementById('webServerPort').value);
+  
+  if (isNaN(newPort) || newPort < 1 || newPort > 65535) {
+    alert('Invalid port number. Please enter a number between 1 and 65535.');
+    return;
+  }
+  
+  try {
+    const status = await ipcRenderer.invoke('get-web-server-status');
+    
+    // If web server is running, stop it first
+    if (status.running) {
+      const stopResult = await ipcRenderer.invoke('stop-web-server');
+      if (!stopResult.success) {
+        alert(`Failed to stop web server: ${stopResult.error}`);
+        closeModal('editWebPortModal');
+        return;
+      }
+    }
+    
+    // Start web server on new port
+    const startResult = await ipcRenderer.invoke('start-web-server', newPort);
+    if (startResult.success) {
+      alert(`Web server ${status.running ? 'restarted' : 'started'} successfully on port ${newPort}!\n\nYou can now access the web GUI at http://localhost:${newPort}`);
+      closeModal('editWebPortModal');
+      loadDashboard();
+      loadListeners();
+    } else {
+      alert(`Failed to start web server on port ${newPort}: ${startResult.error}`);
+      closeModal('editWebPortModal');
+    }
+  } catch (err) {
+    alert(`Error changing web server port: ${err.message}`);
+    closeModal('editWebPortModal');
+  }
+});
+
 // Listen for activity updates
 ipcRenderer.on('activity-update', () => {
   const activePanel = document.querySelector('.panel.active').id;
@@ -1146,9 +1341,10 @@ function renderFileList(files) {
   }
   
   const html = files.map(file => {
-    const icon = file.isDirectory ? '📁' : '📄';
-    const size = file.isDirectory ? '' : formatBytes(file.size);
-    const date = new Date(file.mtime).toLocaleString();
+    const isDirectory = file.type === 'directory' || file.isDirectory;
+    const icon = isDirectory ? '📁' : '📄';
+    const size = isDirectory ? '' : formatBytes(file.size);
+    const date = new Date(file.modified || file.mtime).toLocaleString();
     
     return `
       <div class="file-item">
@@ -1158,7 +1354,7 @@ function renderFileList(files) {
           <div class="file-meta">${size} ${size ? '•' : ''} ${date}</div>
         </div>
         <div class="file-actions">
-          ${file.isDirectory ? 
+          ${isDirectory ? 
             `<button class="btn btn-primary" onclick="browsePath('${currentFileBrowserPath === '/' ? '/' + file.name : currentFileBrowserPath + '/' + file.name}')">Open</button>` :
             `<button class="btn btn-success" onclick="downloadFile('${file.name}')">Download</button>`
           }

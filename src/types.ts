@@ -40,10 +40,11 @@ export interface Permission {
 export interface Listener {
   id?: number;
   name: string;
-  protocol: 'FTP' | 'SFTP';
+  protocol: 'FTP' | 'SFTP' | 'HTTP';
   bindingIp: string;
   port: number;
   enabled: boolean;
+  maxConnections?: number;
   createdAt?: string;
 }
 
