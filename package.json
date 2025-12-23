@@ -1,0 +1,113 @@
+{
+  "name": "slightsftp",
+  "version": "1.0.0",
+  "description": "Multi-user FTP/SFTP server with GUI management",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc && node -e \"const fs=require('fs');const path=require('path');if(!fs.existsSync('dist/assets'))fs.mkdirSync('dist/assets',{recursive:true});fs.copyFileSync('assets/icon.png','dist/assets/icon.png');\"",
+    "start": "npm run build && electron dist/main.js",
+    "dev": "tsc && electron dist/main.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:client": "npm run build && node dist/test-client.js",
+    "setup:testusers": "npm run build && node dist/setup-test-users.js",
+    "test:comprehensive": "npm run setup:testusers && npm run test:client",
+    "test:auto": "npm run build && powershell -ExecutionPolicy Bypass -File run-tests-with-server.ps1",
+    "dist": "npm run build && electron-builder",
+    "dist:win": "npm run build && electron-builder --win --x64"
+  },
+  "keywords": [
+    "ftp",
+    "sftp",
+    "server",
+    "electron",
+    "gui"
+  ],
+  "author": "Sujith Gunawardhane",
+  "license": "ISC",
+  "build": {
+    "appId": "com.slightsftp.app",
+    "productName": "SLightSFTP",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "src/index.html",
+      "src/login.html",
+      "src/renderer.js",
+      "assets/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "assets",
+        "to": "assets",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "nodeGypRebuild": false,
+    "npmRebuild": false,
+    "buildDependenciesFromSource": false,
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "msi",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "requestedExecutionLevel": "requireAdministrator"
+    },
+    "msi": {
+      "oneClick": false,
+      "perMachine": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "SLightSFTP Server",
+      "menuCategory": false,
+      "artifactName": "${productName}-${version}-setup.${ext}",
+      "warningsAsErrors": false,
+      "runAfterFinish": false
+    }
+  },
+  "dependencies": {
+    "basic-ftp": "^5.0.4",
+    "ftp-srv": "^4.6.3",
+    "sql.js": "^1.10.3",
+    "ssh2": "^1.15.0",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "@types/ftp": "^0.3.36",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.6",
+    "@types/sql.js": "^1.4.9",
+    "@types/ssh2": "^1.11.17",
+    "@types/ssh2-sftp-client": "^9.0.6",
+    "electron": "^28.1.0",
+    "electron-builder": "^26.0.12",
+    "ftp": "^0.3.10",
+    "icon-gen": "^5.0.0",
+    "jest": "^29.7.0",
+    "png-to-ico": "^3.0.1",
+    "ssh2-sftp-client": "^12.0.1",
+    "to-ico": "^1.1.5",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.3"
+  }
+}

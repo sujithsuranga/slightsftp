@@ -1,0 +1,24 @@
+node_modules/
+dist/
+*.db
+*.db-journal
+*.log
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+release/
+build/icon.ico
+coverage/
+
+# Config and data
+config.db*
+ftp-root/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
