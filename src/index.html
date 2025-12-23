@@ -715,6 +715,32 @@
     </div>
   </div>
 
+  <!-- Edit Web Server Port Modal -->
+  <div id="editWebPortModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Web Server Port</h2>
+        <button class="close-btn" onclick="closeModal('editWebPortModal')">&times;</button>
+      </div>
+      <form id="editWebPortForm">
+        <div class="form-group">
+          <label>Port</label>
+          <input type="text" id="webServerPort" name="port" pattern="[0-9]+" inputmode="numeric" required autofocus>
+          <small style="color: #666; display: block; margin-top: 5px;">Enter a port number between 1 and 65535</small>
+        </div>
+        <div style="background: #e3f2fd; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+          <p style="margin: 0; font-size: 13px; color: #1976d2;">
+            ℹ️ The web server will be restarted on the new port. You'll need to access the web GUI at the new URL.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn btn-primary">Apply</button>
+          <button type="button" class="btn" onclick="closeModal('editWebPortModal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Add User Modal -->
   <div id="addUserModal" class="modal">
     <div class="modal-content">

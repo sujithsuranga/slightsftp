@@ -103,7 +103,13 @@
                 <div class="feature-card">
                     <div class="feature-icon">🖥️</div>
                     <h3>Modern GUI Management</h3>
-                    <p>Intuitive Electron-based interface with real-time monitoring, activity charts, and easy configuration.</p>
+                    <p>Choose between Desktop (Electron) or Web-based interface with real-time monitoring, activity charts, and easy configuration. Desktop GUI can control the web server.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Web-Based GUI</h3>
+                    <p>Access the management interface from any browser. Perfect for headless servers and remote administration. Can be started/stopped from Desktop GUI.</p>
                 </div>
 
                 <div class="feature-card">
@@ -157,13 +163,25 @@
                 <div class="feature-card">
                     <div class="feature-icon">📈</div>
                     <h3>Session Management</h3>
-                    <p>View active connections, idle timeouts, and terminate sessions with real-time statistics.</p>
+                    <p>View active connections, automatic idle timeouts (5 min), and terminate sessions with real-time statistics.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">🎯</div>
                     <h3>System Tray Integration</h3>
                     <p>Minimize to system tray, keep servers running in the background, and quick access from tray icon.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⏱️</div>
+                    <h3>Automatic Idle Timeout</h3>
+                    <p>Automatic disconnection of idle connections after 5 minutes to prevent resource leaks and ensure optimal performance.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">✅</div>
+                    <h3>Comprehensive Testing</h3>
+                    <p>35+ integration tests with real SFTP/FTP connections ensure reliability and protocol compliance.</p>
                 </div>
             </div>
         </div>
@@ -189,7 +207,7 @@
             <div class="download-card">
                 <div class="version-info">
                     <h3>Latest Version: v1.0.0</h3>
-                    <p class="release-date">Released: December 23, 2025</p>
+                    <p class="release-date">Released: December 25, 2025</p>
                     <p class="release-notes">
                         <strong>What's New:</strong>
                     </p>
@@ -199,10 +217,17 @@
                         <li>Activity log export (Copy/Save to CSV)</li>
                         <li>Dashboard auto-refresh every 5 seconds</li>
                         <li>Enhanced error handling for file operations</li>
-                        <li>System tray integration</li>
+                        <li>System tray integration (Desktop mode)</li>
+                        <li>Web-based GUI interface (Browser mode)</li>
+                        <li>Integrated web server controls in Desktop GUI</li>
                         <li>Multi-user management with GUI</li>
                         <li>Virtual path mapping</li>
-                        <li>Session management</li>
+                        <li>Session management with idle timeout (5 minutes)</li>
+                        <li>Automatic disconnect handling for idle connections</li>
+                        <li>Windows MSI installer for easy deployment</li>
+                        <li>Comprehensive test suite with 35+ integration tests</li>
+                        <li>Enhanced security with robust disconnect handling</li>
+                        <li>Dual deployment modes: Desktop (Electron) or Web Server</li>
                     </ul>
                 </div>
                 <div class="download-buttons">
@@ -235,13 +260,43 @@
                 <ol>
                     <li>Download the installer from the download section above</li>
                     <li>Run the <code>SLightSFTP-1.0.0-setup.msi</code> installer</li>
-                    <li>Follow the installation wizard</li>
+                    <li>Follow the installation wizard:
+                        <ul>
+                            <li>Choose installation directory (default: C:\Program Files\SLightSFTP)</li>
+                            <li>Select Desktop shortcut option</li>
+                            <li>Installer creates all required directories automatically</li>
+                        </ul>
+                    </li>
                     <li>Launch SLightSFTP from the Start Menu or Desktop shortcut</li>
+                    <li>First launch automatically creates database and default admin user</li>
                 </ol>
+                <p><strong>Note:</strong> Administrator privileges are required for installation and first launch.</p>
             </div>
 
             <div class="guide-section">
                 <h3>🚀 Getting Started</h3>
+                <h4>Deployment Modes</h4>
+                <p>SLightSFTP supports two deployment modes:</p>
+                <ul>
+                    <li><strong>Desktop Mode (Default):</strong> Full Electron GUI application with system tray support</li>
+                    <li><strong>Web Server Mode:</strong> Browser-based interface accessible from any device (perfect for headless servers)</li>
+                </ul>
+                <p><strong>Key Feature:</strong> The Desktop GUI includes built-in controls to start/stop the Web Server, allowing you to run both interfaces simultaneously!</p>
+                
+                <h4>Starting Web Server from Desktop GUI</h4>
+                <ol>
+                    <li>Launch the Desktop application (SLightSFTP)</li>
+                    <li>Navigate to the <strong>Settings</strong> or <strong>Web Server</strong> section</li>
+                    <li>Click <strong>Start Web Server</strong></li>
+                    <li>The web GUI will be accessible at <code>http://localhost:3000</code> (default port)</li>
+                    <li>You can now manage the server from both the Desktop GUI and browser simultaneously</li>
+                    <li>Click <strong>Stop Web Server</strong> when you want to disable browser access</li>
+                </ol>
+                <p><strong>Note:</strong> All web server activity is logged in the activity log.</p>
+                
+                <p><strong>To run in standalone Web Server mode:</strong> Use command <code>npm run start:web</code> or <code>node dist/web-only.js</code></p>
+                <p><strong>Default Web GUI URL:</strong> <code>http://localhost:3000</code></p>
+                
                 <h4>First Login</h4>
                 <ul>
                     <li><strong>Default Username:</strong> admin</li>
@@ -259,6 +314,15 @@
                         </ul>
                     </li>
                     <li>Click <strong>Start</strong> on any listener to begin accepting connections</li>
+                </ol>
+                
+                <h4>Accessing Web GUI (Web Server Mode)</h4>
+                <ol>
+                    <li>Start the server with <code>npm run start:web</code></li>
+                    <li>Open your browser and navigate to <code>http://localhost:3000</code></li>
+                    <li>Log in with your credentials (default: admin/admin123)</li>
+                    <li>Access the full management interface from any device on your network</li>
+                    <li>The Web GUI port can be configured via <code>WEB_PORT</code> environment variable</li>
                 </ol>
             </div>
 
@@ -354,6 +418,8 @@
                     <li>✅ Regularly review activity logs for suspicious activity</li>
                     <li>✅ Keep the software updated</li>
                     <li>✅ Use firewall rules to restrict access by IP if needed</li>
+                    <li>✅ Automatic idle timeout (5 min) prevents hung connections</li>
+                    <li>✅ All connection attempts are logged with IP and authentication method</li>
                 </ul>
             </div>
 
@@ -399,9 +465,26 @@
 
                 <h4>Permission Denied Errors</h4>
                 <ul>
-                    <li>Verify user has necessary permissions (read/write/delete)</li>
-                    <li>Check virtual path configuration</li>
-                    <li>Ensure local directory has proper Windows permissions</li>
+                    <li>Verify user has the necessary permissions for the operation</li>
+                    <li>Check virtual path permissions in the user configuration</li>
+                    <li>Ensure the user is assigned to the correct listener</li>
+                    <li>Verify local directory exists and is accessible</li>
+                </ul>
+
+                <h4>Connection Hangs on Exit (Windows SFTP CLI)</h4>
+                <ul>
+                    <li>This is a known issue with the built-in Windows SFTP CLI client</li>
+                    <li>The server automatically disconnects idle connections after 5 minutes</li>
+                    <li><strong>Solution:</strong> Use alternative SFTP clients like FileZilla, WinSCP, or PuTTY's PSFTP</li>
+                    <li>All resources are properly cleaned up on timeout</li>
+                </ul>
+
+                <h4>Idle Connection Timeout</h4>
+                <ul>
+                    <li>Connections idle for 5 minutes are automatically disconnected</li>
+                    <li>This is normal behavior to prevent resource leaks</li>
+                    <li>Perform any operation to reset the idle timer</li>
+                    <li>Simply reconnect if your connection was terminated</li>
                 </ul>
             </div>
         </div>
@@ -431,9 +514,9 @@
                     <div class="version-header">
                         <h3>v1.0.0</h3>
                         <span class="version-badge current">Current</span>
-                        <span class="version-date">December 23, 2025</span>
+                        <span class="version-date">December 25, 2025</span>
                     </div>
-                    <p>Initial release with all core features</p>
+                    <p>Initial release with all core features including comprehensive testing</p>
                     <a href="downloads/SLightSFTP-1.0.0-setup.msi" class="btn btn-small" download>Download</a>
                 </div>
 
@@ -446,15 +529,31 @@
             <div class="changelog">
                 <h3>Changelog</h3>
                 <div class="changelog-entry">
-                    <h4>Version 1.0.0 - December 23, 2025</h4>
+                    <h4>Version 1.0.0 - December 25, 2025</h4>
                     <p><strong>Initial Release</strong></p>
                     <ul>
                         <li>✨ SFTP and FTP server support</li>
-                        <li>✨ Modern GUI with Electron</li>
+                        <li>✨ Modern GUI with Electron (Desktop mode)</li>
+                        <li>✨ Web-based GUI interface (Browser mode)</li>
+                        <li>✨ Dual deployment modes: Desktop or Web Server</li>
+                        <li>✨ Integrated web server controls in Desktop GUI</li>
+                        <li>✨ Start/Stop web server from Desktop interface</li>
                         <li>✨ Real-time activity monitoring with charts</li>
                         <li>✨ Multi-user management</li>
                         <li>✨ Virtual path mapping</li>
                         <li>✨ Granular permissions system</li>
+                        <li>✨ Automatic idle timeout (5 minutes)</li>
+                        <li>✨ Disconnect handling for idle connections</li>
+                        <li>✨ Windows MSI installer</li>
+                        <li>✨ Comprehensive test suite (35+ integration tests)</li>
+                        <li>✨ Real connection testing with SFTP/FTP protocols</li>
+                        <li>✨ Activity log export (CSV/Clipboard)</li>
+                        <li>✨ System tray integration (Desktop mode)</li>
+                        <li>✨ Session management with real-time stats</li>
+                        <li>✨ Authentication logging with IP tracking</li>
+                        <li>✨ Browser-based remote administration</li>
+                        <li>✨ WebSocket real-time updates in Web mode</li>
+                    </ul>
                         <li>✨ Password and SSH key authentication</li>
                         <li>✨ Session management</li>
                         <li>✨ Activity log with export functionality</li>

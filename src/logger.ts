@@ -1,18 +1,24 @@
 import * as winston from 'winston';
 import * as path from 'path';
 import * as fs from 'fs';
-import { app } from 'electron';
 
 // Get logs directory based on environment
 function getLogsDirectory(): string {
-  const isPackaged = app.isPackaged;
-  
-  if (isPackaged) {
-    // Production: Use installation directory
-    const installPath = path.dirname(app.getPath('exe'));
-    return path.join(installPath, 'logs');
-  } else {
-    // Development: Use current working directory
+  // Try to use Electron's app if available, otherwise fall back to Node.js
+  try {
+    const { app } = require('electron');
+    const isPackaged = app.isPackaged;
+    
+    if (isPackaged) {
+      // Production: Use installation directory
+      const installPath = path.dirname(app.getPath('exe'));
+      return path.join(installPath, 'logs');
+    } else {
+      // Development: Use current working directory
+      return path.join(process.cwd(), 'logs');
+    }
+  } catch (error) {
+    // Not running in Electron, use current working directory
     return path.join(process.cwd(), 'logs');
   }
 }
