@@ -398,6 +398,340 @@ body {
     background: linear-gradient(135deg, #FBB034 0%, #FFDD00 100%);
 }
 
+/* Shared section helpers */
+.section-intro {
+    text-align: center;
+    max-width: 780px;
+    margin: 0 auto 2rem auto;
+    color: var(--gray);
+    font-size: 1.05rem;
+}
+
+/* Architecture */
+.architecture {
+    padding: 80px 0;
+    background: white;
+}
+
+.architecture h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.architecture-grid,
+.architecture-subgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.architecture-card {
+    background: var(--light);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.architecture-card h3 {
+    margin-bottom: 0.8rem;
+    color: var(--primary-color);
+}
+
+.architecture-card ul,
+.architecture-card ol {
+    margin-left: 1.2rem;
+    color: var(--gray);
+    line-height: 1.6;
+}
+
+.diagram-wrapper {
+    margin: 2rem 0;
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid #1e293b;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.diagram {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: pre;
+    margin: 0;
+}
+
+/* Benchmarks */
+.benchmarks {
+    padding: 80px 0;
+    background: var(--light);
+}
+
+.benchmarks h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.benchmark-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.benchmark-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.benchmark-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.8rem;
+}
+
+.benchmark-card ul,
+.benchmark-card p,
+.benchmark-card ol {
+    color: var(--gray);
+    line-height: 1.6;
+}
+
+.benchmark-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.benchmark-table th,
+.benchmark-table td {
+    border: 1px solid var(--border);
+    padding: 10px;
+    text-align: left;
+}
+
+.benchmark-table th {
+    background: var(--light);
+    color: var(--dark);
+}
+
+.benchmark-table td {
+    color: var(--gray);
+}
+
+.note {
+    background: #ecfeff;
+    color: #0f172a;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #bae6fd;
+    margin-top: 10px;
+}
+
+/* Protocols */
+.protocols {
+    padding: 80px 0;
+    background: white;
+}
+
+.protocols h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.protocol-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.protocol-card {
+    background: var(--light);
+    padding: 1.4rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.protocol-card h3 {
+    margin-bottom: 0.6rem;
+    color: var(--primary-color);
+}
+
+.protocol-card ul,
+.protocol-card ol,
+.protocol-card p {
+    color: var(--gray);
+    line-height: 1.6;
+}
+
+.protocol-card.wide {
+    grid-column: 1 / -1;
+}
+
+.protocol-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.2rem;
+}
+
+/* Manual */
+.manual {
+    padding: 80px 0;
+    background: var(--light);
+}
+
+.manual h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.manual-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.manual-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.manual-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.6rem;
+}
+
+.manual-card p,
+.manual-card ul,
+.manual-card ol {
+    color: var(--gray);
+    line-height: 1.6;
+}
+
+.screenshot-placeholder {
+    margin: 0.8rem 0;
+    padding: 1.2rem;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    background: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 10px, #eef2ff 10px, #eef2ff 20px);
+    color: var(--gray);
+    text-align: center;
+    font-weight: 600;
+}
+
+.manual-notes {
+    margin-top: 2rem;
+    background: #f8fafc;
+    padding: 1.2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+/* Roadmap */
+.roadmap {
+    padding: 80px 0;
+    background: white;
+}
+
+.roadmap h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.roadmap-card {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.roadmap-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.8rem;
+}
+
+.roadmap-card ul {
+    color: var(--gray);
+    line-height: 1.6;
+    margin-left: 1.2rem;
+}
+
+/* Deep Dives */
+.deep-dives {
+    padding: 80px 0;
+    background: #f8fafc;
+}
+
+.deep-dives h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.deep-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.deep-card {
+    display: block;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+    text-decoration: none;
+    color: var(--dark);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.deep-card h3 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.deep-card p {
+    color: var(--gray);
+    line-height: 1.6;
+    min-height: 72px;
+}
+
+.deep-link {
+    display: inline-block;
+    margin-top: 0.6rem;
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.deep-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary-color);
+}
+
 .coffee-btn-download .coffee-icon {
     font-size: 1.3rem;
 }

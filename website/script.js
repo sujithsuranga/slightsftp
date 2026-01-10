@@ -44,7 +44,7 @@ const observer = new IntersectionObserver((entries) => {
 }, observerOptions);
 
 // Observe feature cards and contact cards
-document.querySelectorAll('.feature-card, .guide-section, .version-item, .contact-card').forEach(el => {
+document.querySelectorAll('.feature-card, .guide-section, .version-item, .contact-card, .architecture-card, .benchmark-card, .protocol-card, .manual-card, .roadmap-card, .deep-card').forEach(el => {
     el.style.opacity = '0';
     observer.observe(el);
 });
@@ -109,4 +109,4 @@ document.querySelectorAll('code').forEach(code => {
 // Console message
 console.log('%cSLightSFTP', 'font-size: 24px; font-weight: bold; color: #2563eb;');
 console.log('%cLightweight SFTP & FTP Server', 'font-size: 14px; color: #64748b;');
-console.log('Version 1.0.0');
+console.log('Version 1.1.0');

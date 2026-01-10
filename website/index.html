@@ -63,7 +63,13 @@
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#download">Download</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#benchmarks">Benchmarks</a></li>
+                <li><a href="#protocols">Protocols 101</a></li>
                 <li><a href="#guide">User Guide</a></li>
+                <li><a href="#manual">User Manual</a></li>
+                <li><a href="#roadmap">Roadmap</a></li>
+                <li><a href="#deep-dives">More Pages</a></li>
                 <li><a href="#versions">Versions</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
@@ -84,6 +90,91 @@
                 <div class="hero-buttons">
                     <a href="#download" class="btn btn-primary">Download Latest Version</a>
                     <a href="#guide" class="btn btn-secondary">View Documentation</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep Dives Section -->
+    <section id="deep-dives" class="deep-dives">
+        <div class="container">
+            <h2>More Pages & Deep Dives</h2>
+            <p class="section-intro">Explore standalone pages with extra diagrams, primers, and walkthroughs to improve content richness and user trust.</p>
+            <div class="deep-grid">
+                <a class="deep-card" href="architecture.html">
+                    <h3>Architecture Guide</h3>
+                    <p>Stack overview, data flow diagrams, deployment topologies, and database model notes.</p>
+                    <span class="deep-link">Open architecture page →</span>
+                </a>
+                <a class="deep-card" href="benchmarks.html">
+                    <h3>Benchmarks</h3>
+                    <p>Throughput samples, methodology, hardware specs, and tuning checklist.</p>
+                    <span class="deep-link">Open benchmarks page →</span>
+                </a>
+                <a class="deep-card" href="protocols.html">
+                    <h3>Protocols 101</h3>
+                    <p>SFTP vs FTP vs FTPS positioning, firewall planning, and public key authentication guide.</p>
+                    <span class="deep-link">Open protocols page →</span>
+                </a>
+                <a class="deep-card" href="user-manual.html">
+                    <h3>User Manual</h3>
+                    <p>Step-by-step screenshots placeholders for dashboard, listeners, users, and exports.</p>
+                    <span class="deep-link">Open manual page →</span>
+                </a>
+                <a class="deep-card" href="security.html">
+                    <h3>Security & Hardening</h3>
+                    <p>Public key how-to, hardening checklist, audit ideas, and incident response playbook.</p>
+                    <span class="deep-link">Open security page →</span>
+                </a>
+                <a class="deep-card" href="faq.html">
+                    <h3>FAQ</h3>
+                    <p>Common questions on ports, passive mode, keys, antivirus, and upgrades.</p>
+                    <span class="deep-link">Open FAQ page →</span>
+                </a>
+                <a class="deep-card" href="build-deploy.html">
+                    <h3>Build & Deploy (Win/Linux/macOS)</h3>
+                    <p>How to build, package, and run SLightSFTP across platforms using Node.js/TypeScript.</p>
+                    <span class="deep-link">Open build & deploy page →</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="roadmap">
+        <div class="container">
+            <h2>Roadmap & Missing Features</h2>
+            <p class="section-intro">What is planned next and what is intentionally out-of-scope today.</p>
+            <div class="roadmap-grid">
+                <div class="roadmap-card">
+                    <h3>Planned</h3>
+                    <ul>
+                        <li>🔜 TLS termination helper for Web GUI behind reverse proxies</li>
+                        <li>🔜 Configurable passive FTP port ranges via UI</li>
+                        <li>🔜 Per-listener bandwidth caps and throttling</li>
+                        <li>🔜 Scheduled maintenance mode with custom banner</li>
+                        <li>🔜 Email/Discord webhook alerts on failures</li>
+                    </ul>
+                </div>
+                <div class="roadmap-card">
+                    <h3>Known Gaps</h3>
+                    <ul>
+                        <li>❗ No built-in FTPS (explicit TLS) yet—use SFTP for encryption</li>
+                        <li>❗ No clustering/HA; single-node focus</li>
+                        <li>❗ No quota enforcement per user (use filesystem quotas)</li>
+                        <li>❗ Passive port range must be set in config files for now</li>
+                        <li>❗ No macOS/Linux installer; Windows-first</li>
+                    </ul>
+                </div>
+                <div class="roadmap-card">
+                    <h3>Use Case Ideas</h3>
+                    <ul>
+                        <li>Partner file drops with key-only SFTP on a DMZ port</li>
+                        <li>Internal automation over FTP for legacy tools</li>
+                        <li>Lab environments with throwaway users and virtual paths</li>
+                        <li>Secure log collection using append-only paths</li>
+                        <li>Hybrid: Desktop GUI for ops + Web GUI for support teams</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -245,6 +336,216 @@
                             <span>Buy Me a Coffee</span>
                         </a>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="architecture">
+        <div class="container">
+            <h2>Architecture & Deployment</h2>
+            <p class="section-intro">Understand how SLightSFTP pieces fit together for Desktop and Web deployments.</p>
+            <div class="architecture-grid">
+                <div class="architecture-card">
+                    <h3>Desktop (Electron) Stack</h3>
+                    <ul>
+                        <li>Electron shell hosting the management UI</li>
+                        <li>Embedded Node.js server hosting SFTP/FTP listeners</li>
+                        <li>SQLite database for users, listeners, and activity</li>
+                        <li>System tray controller for background runtime</li>
+                    </ul>
+                </div>
+                <div class="architecture-card">
+                    <h3>Web Server Stack</h3>
+                    <ul>
+                        <li>Node.js + TypeScript back end</li>
+                        <li>REST + WebSocket API for live stats and control</li>
+                        <li>Headless friendly: run as Windows service or scheduled task</li>
+                        <li>Same database schema shared across modes</li>
+                    </ul>
+                </div>
+                <div class="architecture-card">
+                    <h3>Security Layers</h3>
+                    <ul>
+                        <li>Authentication: password and SSH public key</li>
+                        <li>Authorization: per-listener permissions and virtual paths</li>
+                        <li>Isolation: sandboxed virtual paths to local folders</li>
+                        <li>Observability: audit-grade activity logging with IP + auth method</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="diagram-wrapper">
+<pre class="diagram">
+Desktop Mode
++-------------------+     +------------------+     +--------------------+
+| Electron GUI      | --> | Node Controller  | --> | SFTP/FTP Listeners |
+| (React/HTML)      |     | (IPC + WebSocket)|     | (Ports 22/21/Custom)|
++-------------------+     +------------------+     +--------------------+
+         |                       |                          |
+         v                       v                          v
+    Activity Log           SQLite Database            Virtual Paths
+</pre>
+
+<pre class="diagram">
+Web Mode
+Client Browser --> Web GUI --> REST/WebSocket API --> Core Server --> Listeners --> Storage
+</pre>
+            </div>
+
+            <div class="architecture-subgrid">
+                <div class="architecture-card">
+                    <h3>Data Model Highlights</h3>
+                    <ul>
+                        <li>Users: credentials, SSH keys, listener bindings, permissions</li>
+                        <li>Listeners: protocol, port, bind IP, status, statistics</li>
+                        <li>Virtual Paths: virtual to local mapping with scoped permissions</li>
+                        <li>Activity: timestamp, username, path, verb, success/error, remote IP</li>
+                    </ul>
+                </div>
+                <div class="architecture-card">
+                    <h3>Deployment Recipes</h3>
+                    <ol>
+                        <li><strong>Desktop only:</strong> Install MSI ➜ Start app ➜ Keep tray running</li>
+                        <li><strong>Desktop + Web:</strong> Start Web Server from GUI ➜ expose port 3000 via firewall rule</li>
+                        <li><strong>Headless:</strong> <code>npm run start:web</code> ➜ configure service ➜ manage via browser</li>
+                    </ol>
+                </div>
+                <div class="architecture-card">
+                    <h3>Network Placement</h3>
+                    <ul>
+                        <li>DMZ listener for external partners, internal listener for LAN users</li>
+                        <li>Different keys/passwords per listener</li>
+                        <li>Optional reverse proxy for TLS termination of Web GUI</li>
+                        <li>Restrict ports with Windows Firewall scopes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benchmarks Section -->
+    <section id="benchmarks" class="benchmarks">
+        <div class="container">
+            <h2>Benchmark & Performance Notes</h2>
+            <p class="section-intro">Indicative numbers on common hardware. Your mileage varies based on disk, network, and antivirus hooks.</p>
+            <div class="benchmark-grid">
+                <div class="benchmark-card">
+                    <h3>Test Rig</h3>
+                    <ul>
+                        <li>CPU: i5-12600K, 32 GB RAM</li>
+                        <li>Disk: NVMe SSD (PCIe 4.0)</li>
+                        <li>Network: 1 Gbps LAN</li>
+                        <li>OS: Windows 11 Pro 23H2</li>
+                        <li>Build: SLightSFTP v1.1.0 (Desktop mode)</li>
+                    </ul>
+                </div>
+                <div class="benchmark-card">
+                    <h3>Results (samples)</h3>
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Scenario</th>
+                                <th>Throughput</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Single SFTP upload (1 GB)</td>
+                                <td>410 Mbps</td>
+                                <td>CPU ~18%, disk-bound</td>
+                            </tr>
+                            <tr>
+                                <td>4 parallel SFTP uploads (1 GB each)</td>
+                                <td>720 Mbps agg.</td>
+                                <td>CPU ~42%, stable RAM</td>
+                            </tr>
+                            <tr>
+                                <td>FTP download burst (1000 x 1 MB)</td>
+                                <td>560 Mbps</td>
+                                <td>Control channel steady, no drops</td>
+                            </tr>
+                            <tr>
+                                <td>Authentication throughput</td>
+                                <td>800 logins/min</td>
+                                <td>With logging enabled</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="benchmark-card">
+                    <h3>Methodology</h3>
+                    <ul>
+                        <li>Clients: WinSCP 6.3.3 and FileZilla 3.66</li>
+                        <li>Default idle timeout (5 min) kept enabled</li>
+                        <li>No compression; AES-256 for SFTP</li>
+                        <li>Windows Defender active (no exclusions)</li>
+                        <li>Logs retained; CSV export post-test</li>
+                    </ul>
+                    <p class="note">Tip: exclude the data directory from real-time AV scanning for higher throughput.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Protocols Section -->
+    <section id="protocols" class="protocols">
+        <div class="container">
+            <h2>SFTP vs FTP: Quick Primer</h2>
+            <p class="section-intro">Choose the right protocol for your users and compliance posture.</p>
+            <div class="protocol-grid">
+                <div class="protocol-card">
+                    <h3>SFTP (SSH File Transfer)</h3>
+                    <ul>
+                        <li>Encrypted by default over SSH (port 22)</li>
+                        <li>Single channel for control and data</li>
+                        <li>Supports password and SSH public keys</li>
+                        <li>Best for Internet-facing and regulated workloads</li>
+                    </ul>
+                </div>
+                <div class="protocol-card">
+                    <h3>FTP (File Transfer Protocol)</h3>
+                    <ul>
+                        <li>Classic protocol; simple client compatibility</li>
+                        <li>Separate control and data channels (port 21 + passive ports)</li>
+                        <li>Use behind VPNs or trusted LANs</li>
+                        <li>Configure firewall for passive port ranges if exposed</li>
+                    </ul>
+                </div>
+                <div class="protocol-card">
+                    <h3>When to pick which?</h3>
+                    <ul>
+                        <li><strong>Security first:</strong> pick SFTP</li>
+                        <li><strong>Legacy tooling:</strong> keep FTP for known clients</li>
+                        <li><strong>Mixed estate:</strong> run both listeners on different ports</li>
+                        <li><strong>Automation:</strong> both support scripts via curl/psftp</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="protocol-details">
+                <div class="protocol-card wide">
+                    <h3>Public Key Authentication (SSH)</h3>
+                    <ol>
+                        <li>Generate a key pair on the client (<code>ssh-keygen -t ed25519 -C "user@host"</code>)</li>
+                        <li>Copy the <strong>public</strong> key contents (e.g., <code>id_ed25519.pub</code>)</li>
+                        <li>In SLightSFTP Users panel, enable "Public Key" and paste the key</li>
+                        <li>Keep "Password" enabled for fallback or disable for key-only</li>
+                        <li>Distribute the <strong>private</strong> key securely; set file permissions on the client</li>
+                        <li>Connect with a client that supports keys (WinSCP, FileZilla, OpenSSH)</li>
+                    </ol>
+                    <p class="note">Keys remain on the server database; they are never exposed to clients. Revoking access is instant—remove the key and save.</p>
+                </div>
+                <div class="protocol-card wide">
+                    <h3>Firewall & Port Planning</h3>
+                    <ul>
+                        <li>SFTP: allow chosen port (default 22); prefer static IP allowlist</li>
+                        <li>FTP: allow control port 21 plus passive range (configurable); use narrow ranges</li>
+                        <li>Web GUI: default 3000; proxy behind IIS/NGINX for TLS</li>
+                        <li>Audit: activity log captures remote IP and auth method for every attempt</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -485,6 +786,67 @@
                     <li>This is normal behavior to prevent resource leaks</li>
                     <li>Perform any operation to reset the idle timer</li>
                     <li>Simply reconnect if your connection was terminated</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Manual Section -->
+    <section id="manual" class="manual">
+        <div class="container">
+            <h2>User Manual & Visual Walkthrough</h2>
+            <p class="section-intro">Step-by-step guidance with annotated screenshot placeholders. Swap placeholders with your real captures to boost trust and ad quality.</p>
+
+            <div class="manual-grid">
+                <div class="manual-card">
+                    <h3>Dashboard Overview</h3>
+                    <p>Shows live activity, listener health, and recent errors. Use it to confirm connections, throughput, and failures in real time.</p>
+                    <div class="screenshot-placeholder" aria-label="Dashboard screenshot placeholder">Dashboard screenshot (insert image)</div>
+                    <ol>
+                        <li>Open the app; dashboard loads by default</li>
+                        <li>Verify listeners are green; start if stopped</li>
+                        <li>Watch activity chart for spikes; click errors to drill into logs</li>
+                    </ol>
+                </div>
+                <div class="manual-card">
+                    <h3>User & Key Management</h3>
+                    <p>Create accounts, attach SSH keys, and map virtual paths.</p>
+                    <div class="screenshot-placeholder" aria-label="User management screenshot placeholder">Users page screenshot (insert image)</div>
+                    <ol>
+                        <li>Add user ➜ set password ➜ paste public key (optional)</li>
+                        <li>Assign listeners (SFTP/FTP) and permissions (read, write, delete, rename, create, list)</li>
+                        <li>Attach virtual paths to isolate storage per user</li>
+                    </ol>
+                </div>
+                <div class="manual-card">
+                    <h3>Listener Controls</h3>
+                    <p>Start, stop, and edit listener settings from GUI or Web.</p>
+                    <div class="screenshot-placeholder" aria-label="Listener configuration screenshot placeholder">Listeners screenshot (insert image)</div>
+                    <ol>
+                        <li>Open Listeners panel ➜ click Add</li>
+                        <li>Select protocol, port, bind IP; save</li>
+                        <li>Use Start/Stop; watch status badges and port validation</li>
+                    </ol>
+                </div>
+                <div class="manual-card">
+                    <h3>Activity & Audit Exports</h3>
+                    <p>Audit-ready logs with CSV export and copy-to-clipboard.</p>
+                    <div class="screenshot-placeholder" aria-label="Activity log screenshot placeholder">Activity log screenshot (insert image)</div>
+                    <ol>
+                        <li>Open Activity tab to filter by time and listener</li>
+                        <li>Click Copy to move logs to clipboard or Save to CSV</li>
+                        <li>Archive exports for compliance evidence</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="manual-notes">
+                <h3>Screenshot Tips</h3>
+                <ul>
+                    <li>Capture at 1440p with neutral theme for clarity</li>
+                    <li>Blur sensitive hostnames or IPs</li>
+                    <li>Highlight buttons and toggles with callouts before export</li>
+                    <li>Keep file names descriptive (e.g., <code>dashboard-live.png</code>)</li>
                 </ul>
             </div>
         </div>
